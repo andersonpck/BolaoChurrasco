@@ -20,7 +20,9 @@ TIME_A = "Brasil"
 TIME_B = "Marrocos"
 
 VALOR_APOSTA = 80
-ARQUIVO = "palpites.csv"
+import os
+
+ARQUIVO = os.path.join(os.path.dirname(os.path.abspath(__file__)), "palpites.csv")
 
 # =====================================
 # RESULTADO OFICIAL DO JOGO
