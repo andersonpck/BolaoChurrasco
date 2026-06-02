@@ -1,6 +1,10 @@
 import streamlit as st
 import pandas as pd
 import os
+import streamlit as st
+
+st.write("📁 Arquivos no servidor:")
+st.write(os.listdir())
 # =====================================
 # CONFIGURAÇÕES
 # =====================================
