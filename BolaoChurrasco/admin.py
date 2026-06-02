@@ -82,12 +82,12 @@ if st.button("Calcular vencedor"):
         )
 
         erro_time = 0
-    if linha["PrimeiroGol"] != primeiro_gol:
+        if linha["PrimeiroGol"] != primeiro_gol:
             erro_time = 100
 
         erro_minuto = abs(linha["Minuto"] - minuto_primeiro_gol)
 
-    return erro_placar * 1000 + erro_time + erro_minuto
+        return erro_placar * 1000 + erro_time + erro_minuto
 
     df["Pontuacao"] = df.apply(calcular_pontos, axis=1)
 
@@ -97,7 +97,7 @@ if st.button("Calcular vencedor"):
         st.warning("Nenhum palpite encontrado para calcular o vencedor.")
         st.stop()
 
-        vencedor = ranking.iloc[0]
+    vencedor = ranking.iloc[0]
 
     st.success(f"🏆 Vencedor: {vencedor['Nome']}")
 
