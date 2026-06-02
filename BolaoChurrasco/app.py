@@ -268,10 +268,26 @@ if modo == "Apostar":
         )
 
         st.success(
-            "✅ Palpite registrado!"
-        )
+    "💰 Aposta registrada com sucesso! 🍖"
+)
 
-        st.balloons()
+st.markdown(
+    """
+    <div style="
+        text-align:center;
+        font-size:50px;
+        line-height:2;
+        margin-top:20px;
+    ">
+        💸 💸 💸 💸 💸 💸 💸 💸<br>
+        🍖 🍺 🍖 🍺 🍖 🍺 🍖 🍺<br>
+        💸 💸 💸 💸 💸 💸 💸 💸
+    </div>
+    """,
+    unsafe_allow_html=True
+)
+
+st.snow()
 
 # =====================================
 # ADMIN
