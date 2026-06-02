@@ -5,14 +5,6 @@ from datetime import datetime
 import os
 import streamlit as st
 
-import os
-import streamlit as st
-
-import os
-
-if os.path.exists("palpites.csv"):
-    os.remove("palpites.csv")
-
 # =====================================
 # CONFIGURAÇÃO DO STREAMLIT
 # =====================================
