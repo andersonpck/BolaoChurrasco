@@ -269,11 +269,9 @@ if modo == "Apostar":
         st.success(
         "💰 Aposta registrada com sucesso! 🍖"
         )
-
-        st.success(
-            "💰 Palpite registrado com sucesso!"
-        )
-
+        
+       st.baloons()
+        
         st.markdown("""
         ### 🍖 Bem-vindo ao churrasco!
 
