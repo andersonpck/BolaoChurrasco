@@ -270,20 +270,17 @@ if modo == "Apostar":
         "💰 Aposta registrada com sucesso! 🍖"
         )
 
-        st.markdown(
-        """
-        <div style="
-        text-align:center;
-        font-size:50px;
-        line-height:2;
-        margin-top:20px;
-        ">
-        💸 💸 💸 💸 💸 💸 💸 💸<br>
-        🍖 🍺 🍖 🍺 🍖 🍺 🍖 🍺<br>
-        💸 💸 💸 💸 💸 💸 💸 💸
-        </div>
-        """,
-        unsafe_allow_html=True
+        st.success(
+            "💰 Palpite registrado com sucesso!"
+        )
+
+        st.markdown("""
+        ### 🍖 Bem-vindo ao churrasco!
+
+        💸 Sua contribuição foi registrada.
+
+        🏆 Boa sorte no bolão!
+        """)
     )
 
     st.snow()
