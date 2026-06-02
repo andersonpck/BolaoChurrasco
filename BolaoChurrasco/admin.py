@@ -3,8 +3,7 @@ import pandas as pd
 import os
 from datetime import datetime
 import os
-st.write("📁 Arquivos no servidor:")
-st.write(os.listdir())
+
 # =====================================
 # CONFIGURAÇÃO DO STREAMLIT
 # =====================================
@@ -28,7 +27,9 @@ ENCERRAMENTO = datetime(2026, 6, 13, 19, 0)
 # =====================================
 # ARQUIVO (SIMPLIFICADO - SEM ERRO DE PATH)
 # =====================================
-ARQUIVO = "palpites.csv"
+import os
+
+ARQUIVO = os.path.join(os.getcwd(), "palpites.csv")
 
 # =====================================
 # TÍTULO
