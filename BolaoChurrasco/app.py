@@ -6,6 +6,7 @@ from datetime import datetime
 # =====================================
 # CONFIGURAÇÃO
 # =====================================
+
 st.set_page_config(
     page_title="Bolão do Churrasco",
     page_icon="⚽",
@@ -20,41 +21,53 @@ PERCENTUAL_PREMIO = 0.50
 
 ARQUIVO = "palpites.csv"
 
-ENCERRAMENTO = datetime(2026, 6, 13, 19, 0)
+ENCERRAMENTO = datetime(
+    2026,
+    6,
+    13,
+    19,
+    0
+)
 
 ADMIN_PASSWORD = "1234"
 
 # =====================================
 # MENU
 # =====================================
+
 modo = st.sidebar.selectbox(
     "Modo",
     ["Apostar", "Admin"]
 )
 
+st.title("⚽ Bolão do Churrasco")
+
 # =====================================
-# CRIA CSV
+# CRIA CSV SE NÃO EXISTIR
 # =====================================
+
 if not os.path.exists(ARQUIVO):
-    pd.DataFrame(columns=[
+
+    df_init = pd.DataFrame(columns=[
         "Nome",
         "GolsA",
         "GolsB",
         "PrimeiroGol",
         "Minuto",
         "DataHora"
-    ]).to_csv(ARQUIVO, index=False)
+    ])
+
+    df_init.to_csv(
+        ARQUIVO,
+        index=False
+    )
 
 df = pd.read_csv(ARQUIVO)
 
 # =====================================
-# CABEÇALHO
-# =====================================
-st.title("⚽ Bolão do Churrasco")
-
-# =====================================
 # MODO APOSTAR
 # =====================================
+
 if modo == "Apostar":
 
     total_participantes = len(df)
@@ -65,7 +78,9 @@ if modo == "Apostar":
         * PERCENTUAL_PREMIO
     )
 
-    st.subheader(f"{TIME_A} x {TIME_B}")
+    st.subheader(
+        f"{TIME_A} x {TIME_B}"
+    )
 
     col1, col2 = st.columns(2)
 
@@ -84,30 +99,70 @@ if modo == "Apostar":
     # =====================================
     # REGRAS
     # =====================================
+
     st.markdown("### 📜 Regras do Bolão")
 
     st.info(
         f"""
-• Cada palpite custa **R$ {VALOR_APOSTA}**
+• Cada palpite custa R$ {VALOR_APOSTA}
 
-• **50%** do valor arrecadado vai para o vencedor
+• 50% do valor arrecadado será pago ao vencedor.
 
-• **50%** do valor arrecadado ajuda a pagar o churrasco
+• 50% do valor arrecadado ajudará a custear o churrasco.
 
-• Cada participante leva sua própria bebida
+• Cada participante leva sua própria bebida.
 
-• Critério de desempate:
-    1. Placar mais próximo
-    2. Time que faz o primeiro gol
-    3. Minuto do primeiro gol
+• Apenas um vencedor por partida.
 
-• Apenas 1 vencedor por jogo
+• Após o encerramento não serão aceitos novos palpites.
 """
     )
 
     # =====================================
+    # FÓRMULA
+    # =====================================
+
+    st.markdown("### 🧮 Como o vencedor é calculado?")
+
+    st.write(
+        "Vence quem tiver o menor erro total."
+    )
+
+    st.latex(
+        r"""
+        E =
+        1000\left(
+        |P_A-R_A|
+        +
+        |P_B-R_B|
+        \right)
+        +
+        100I
+        +
+        |M_P-M_R|
+        """
+    )
+
+    st.markdown("""
+**Onde:**
+
+- **E** = Erro Total
+- **P_A** = gols previstos para o Time A
+- **R_A** = gols reais do Time A
+- **P_B** = gols previstos para o Time B
+- **R_B** = gols reais do Time B
+- **M_P** = minuto previsto do primeiro gol
+- **M_R** = minuto real do primeiro gol
+- **I = 0** se acertar quem fez o primeiro gol
+- **I = 1** se errar quem fez o primeiro gol
+
+🏆 Ganha quem tiver o menor valor de E.
+""")
+
+    # =====================================
     # CONTAGEM REGRESSIVA
     # =====================================
+
     agora = datetime.now()
 
     if agora < ENCERRAMENTO:
@@ -116,17 +171,23 @@ if modo == "Apostar":
 
         dias = restante.days
         horas = restante.seconds // 3600
-        minutos = (restante.seconds % 3600) // 60
+        minutos = (
+            restante.seconds % 3600
+        ) // 60
 
-        st.info(
-            f"⏰ Encerramento em "
+        st.warning(
+            f"⏳ Encerramento em "
             f"{dias}d "
             f"{horas}h "
             f"{minutos}min"
         )
 
     else:
-        st.error("⛔ Apostas encerradas.")
+
+        st.error(
+            "⛔ Apostas encerradas."
+        )
+
         st.stop()
 
     st.markdown("---")
@@ -134,6 +195,7 @@ if modo == "Apostar":
     # =====================================
     # FORMULÁRIO
     # =====================================
+
     nome = st.text_input("Nome")
 
     col1, col2 = st.columns(2)
@@ -169,7 +231,9 @@ if modo == "Apostar":
     if st.button("Enviar palpite"):
 
         if nome.strip() == "":
-            st.error("Digite seu nome.")
+            st.error(
+                "Digite seu nome."
+            )
             st.stop()
 
         nomes_existentes = (
@@ -180,9 +244,11 @@ if modo == "Apostar":
         )
 
         if nome.lower() in nomes_existentes:
+
             st.error(
                 "Você já registrou um palpite."
             )
+
             st.stop()
 
         novo = pd.DataFrame([{
@@ -210,6 +276,7 @@ if modo == "Apostar":
 # =====================================
 # ADMIN
 # =====================================
+
 else:
 
     senha = st.text_input(
@@ -218,7 +285,11 @@ else:
     )
 
     if senha != ADMIN_PASSWORD:
-        st.warning("🔒 Acesso restrito.")
+
+        st.warning(
+            "🔒 Acesso restrito."
+        )
+
         st.stop()
 
     st.subheader(
@@ -227,26 +298,43 @@ else:
 
     total_participantes = len(df)
 
-    premio = (
+    arrecadado = (
         total_participantes
         * VALOR_APOSTA
-        * PERCENTUAL_PREMIO
     )
 
-    st.metric(
-        "Prêmio Atual",
-        f"R$ {premio:,.2f}"
+    premio = (
+        arrecadado * 0.50
     )
 
-    st.metric(
-        "Participantes",
-        total_participantes
+    churrasco = (
+        arrecadado * 0.50
     )
+
+    col1, col2, col3 = st.columns(3)
+
+    with col1:
+        st.metric(
+            "Participantes",
+            total_participantes
+        )
+
+    with col2:
+        st.metric(
+            "Prêmio",
+            f"R$ {premio:,.2f}"
+        )
+
+    with col3:
+        st.metric(
+            "Churrasco",
+            f"R$ {churrasco:,.2f}"
+        )
 
     st.markdown("---")
 
     if st.button(
-        "🧨 Zerar bolão (apagar todos os palpites)"
+        "🧨 Zerar bolão"
     ):
 
         pd.DataFrame(columns=[
@@ -268,9 +356,11 @@ else:
         st.stop()
 
     if df.empty:
+
         st.warning(
             "Nenhum palpite registrado."
         )
+
         st.stop()
 
     resultado_a = st.number_input(
@@ -299,9 +389,11 @@ else:
         1
     )
 
-    if st.button("Calcular vencedor"):
+    if st.button(
+        "Calcular vencedor"
+    ):
 
-        def calcular_pontos(linha):
+        def calcular_erro(linha):
 
             erro_placar = (
                 abs(
@@ -332,13 +424,13 @@ else:
                 + erro_minuto
             )
 
-        df["Pontuacao"] = df.apply(
-            calcular_pontos,
+        df["Erro Total"] = df.apply(
+            calcular_erro,
             axis=1
         )
 
         ranking = df.sort_values(
-            "Pontuacao"
+            "Erro Total"
         )
 
         vencedor = ranking.iloc[0]
@@ -363,7 +455,7 @@ else:
                     "GolsB",
                     "PrimeiroGol",
                     "Minuto",
-                    "Pontuacao"
+                    "Erro Total"
                 ]
             ],
             use_container_width=True
