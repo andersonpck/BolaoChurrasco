@@ -40,7 +40,7 @@ modo = st.sidebar.selectbox(
     ["Apostar", "Admin"]
 )
 
-st.title("⚽ Bolão do Churrasco")
+st.title("⚽ CHURRASCO E BOLÃO DA COPA")
 
 # =====================================
 # CRIA CSV SE NÃO EXISTIR
