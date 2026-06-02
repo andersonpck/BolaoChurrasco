@@ -148,17 +148,12 @@ if st.button("Enviar Palpite"):
         "Minuto": minuto,
         "DataHora": datetime.now()
     }])
-    if os.path.exists(ARQUIVO):
-        novo_palpite.to_csv(
-            ARQUIVO,
-            mode="a",
-            header=False,
-            index=False
-        )
-    else:
-        novo_palpite.to_csv(
-            ARQUIVO,
-            index=False
+    novo_palpite.to_csv(
+    ARQUIVO,
+    mode="a",
+    header=not os.path.exists(ARQUIVO),
+    index=False
+)
         )
     st.success(
         "✅ Palpite registrado com sucesso!"
