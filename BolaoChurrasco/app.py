@@ -26,7 +26,9 @@ ENCERRAMENTO = datetime(2026, 6, 13, 19, 0)
 # =====================================
 # ARQUIVO (SIMPLIFICADO - SEM ERRO DE PATH)
 # =====================================
-ARQUIVO = "palpites.csv"
+import os
+
+ARQUIVO = os.path.join(os.getcwd(), "palpites.csv")
 
 # =====================================
 # TÍTULO
