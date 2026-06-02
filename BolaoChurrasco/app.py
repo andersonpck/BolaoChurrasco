@@ -20,15 +20,17 @@ ARQUIVO = "palpites.csv"
 
 ENCERRAMENTO = datetime(2026, 6, 13, 19, 0)
 
+ADMIN_PASSWORD = "1234"
+
 # =====================================
-# MENU (APP + ADMIN)
+# MENU
 # =====================================
 modo = st.sidebar.selectbox("Modo", ["Apostar", "Admin"])
 
 st.title("⚽ Bolão do Churrasco")
 
 # =====================================
-# CRIAR CSV SE NÃO EXISTIR
+# CRIA CSV SE NÃO EXISTIR
 # =====================================
 if not os.path.exists(ARQUIVO):
     df_init = pd.DataFrame(columns=[
@@ -48,7 +50,7 @@ if modo == "Apostar":
     agora = datetime.now()
 
     if agora > ENCERRAMENTO:
-        st.error("Apostas encerradas.")
+        st.error("⛔ Apostas encerradas.")
         st.stop()
 
     nome = st.text_input("Nome")
@@ -72,7 +74,7 @@ if modo == "Apostar":
             st.stop()
 
         if nome.lower() in df["Nome"].astype(str).str.lower().values:
-            st.error("Você já apostou.")
+            st.error("Você já fez seu palpite.")
             st.stop()
 
         novo = pd.DataFrame([{
@@ -86,35 +88,46 @@ if modo == "Apostar":
 
         novo.to_csv(ARQUIVO, mode="a", header=False, index=False)
 
-        st.success("Palpite registrado!")
+        st.success("✅ Palpite registrado!")
         st.balloons()
 
     st.markdown("---")
     st.subheader("📊 Palpites registrados")
+
     st.dataframe(df)
 
 # =====================================
-# MODO ADMIN
+# MODO ADMIN (PROTEGIDO)
 # =====================================
 elif modo == "Admin":
 
-    st.subheader("🏆 Administração")
+    senha = st.text_input("Senha do admin", type="password")
+
+    if senha != ADMIN_PASSWORD:
+        st.warning("🔒 Acesso restrito.")
+        st.stop()
+
+    st.subheader("🏆 Administração do Bolão")
 
     if df.empty:
-        st.warning("Nenhum palpite ainda.")
+        st.warning("Nenhum palpite registrado ainda.")
         st.stop()
 
     resultado_a = st.number_input(f"Gols {TIME_A}", 0, 20, 0)
     resultado_b = st.number_input(f"Gols {TIME_B}", 0, 20, 0)
 
     primeiro_gol_oficial = st.radio("Primeiro gol oficial", [TIME_A, TIME_B])
+
     minuto_oficial = st.number_input("Minuto do primeiro gol", 1, 120, 1)
 
     if st.button("Calcular vencedor"):
 
         def calcular_pontos(linha):
 
-            erro_placar = abs(linha["GolsA"] - resultado_a) + abs(linha["GolsB"] - resultado_b)
+            erro_placar = (
+                abs(linha["GolsA"] - resultado_a) +
+                abs(linha["GolsB"] - resultado_b)
+            )
 
             erro_time = 0
             if linha["PrimeiroGol"] != primeiro_gol_oficial:
@@ -132,7 +145,7 @@ elif modo == "Admin":
 
         st.success(f"🏆 Vencedor: {vencedor['Nome']}")
 
-        st.subheader("📊 Ranking")
+        st.subheader("📊 Ranking Final")
 
         st.dataframe(
             ranking[
