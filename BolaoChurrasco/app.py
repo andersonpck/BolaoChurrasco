@@ -5,10 +5,17 @@ from datetime import datetime
 import os
 import streamlit as st
 
-st.write("📍 Caminho atual:", os.getcwd())
+import os
+import streamlit as st
+
+st.write("📍 Diretório do app:", os.getcwd())
 st.write("📁 Arquivos:", os.listdir())
 
-st.write("📄 Existe CSV?", os.path.exists("palpites.csv"))
+st.write("📄 CSV existe?", os.path.exists("palpites.csv"))
+
+if os.path.exists("palpites.csv"):
+    st.write("📊 Conteúdo do CSV:")
+    st.dataframe(pd.read_csv("palpites.csv"))
 
 # =====================================
 # CONFIGURAÇÃO DO STREAMLIT
