@@ -8,14 +8,10 @@ import streamlit as st
 import os
 import streamlit as st
 
-st.write("📍 Diretório do app:", os.getcwd())
-st.write("📁 Arquivos:", os.listdir())
-
-st.write("📄 CSV existe?", os.path.exists("palpites.csv"))
+import os
 
 if os.path.exists("palpites.csv"):
-    st.write("📊 Conteúdo do CSV:")
-    st.dataframe(pd.read_csv("palpites.csv"))
+    os.remove("palpites.csv")
 
 # =====================================
 # CONFIGURAÇÃO DO STREAMLIT
