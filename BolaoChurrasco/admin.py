@@ -89,9 +89,9 @@ if st.button("Calcular vencedor"):
 
         return erro_placar * 1000 + erro_time + erro_minuto
 
-    df["Pontuacao"] = df.apply(calcular_pontos, axis=1)
+        df["Pontuacao"] = df.apply(calcular_pontos, axis=1)
 
-    ranking = df.sort_values("Pontuacao")
+        ranking = df.sort_values("Pontuacao")
 
     if len(ranking) == 0:
     st.warning("Nenhum palpite encontrado para calcular o vencedor.")
