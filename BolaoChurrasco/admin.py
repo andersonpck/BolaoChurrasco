@@ -1,36 +1,41 @@
 import streamlit as st
 import pandas as pd
 import os
-import streamlit as st
-
 
 # =====================================
-# CONFIGURAÇÕES
+# CONFIGURAÇÃO
 # =====================================
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-ARQUIVO = os.path.join(BASE_DIR, "palpites.csv")
-VALOR_APOSTA = 80
-
 st.set_page_config(
-    page_title="Administração do Bolão",
+    page_title="Administração",
     page_icon="🏆",
     layout="centered"
 )
 
 st.title("🏆 Administração do Bolão")
 
+TIME_A = "Brasil"
+TIME_B = "Marrocos"
+
+VALOR_APOSTA = 80
+
 # =====================================
-# RESULTADO DO JOGO
+# CAMINHO DO CSV (MESMO DO APP)
 # =====================================
-resultado_brasil = st.number_input(
-    "Gols Brasil",
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+ARQUIVO = os.path.join(BASE_DIR, "palpites.csv")
+
+# =====================================
+# INPUT DO RESULTADO OFICIAL
+# =====================================
+resultado_a = st.number_input(
+    f"Gols {TIME_A}",
     min_value=0,
     max_value=20,
     value=0
 )
 
-resultado_marrocos = st.number_input(
-    "Gols Marrocos",
+resultado_b = st.number_input(
+    f"Gols {TIME_B}",
     min_value=0,
     max_value=20,
     value=0
@@ -38,7 +43,7 @@ resultado_marrocos = st.number_input(
 
 primeiro_gol = st.radio(
     "Primeiro gol",
-    ["Brasil", "Marrocos"]
+    [TIME_A, TIME_B]
 )
 
 minuto_primeiro_gol = st.number_input(
@@ -49,27 +54,18 @@ minuto_primeiro_gol = st.number_input(
 )
 
 # =====================================
-# BOTÃO
+# BOTÃO CALCULAR
 # =====================================
 if st.button("Calcular vencedor"):
 
-    # =====================================
-    # PROTEÇÃO CSV
-    # =====================================
     if not os.path.exists(ARQUIVO):
-        st.warning("Nenhum palpite registrado ainda.")
+        st.error("Nenhum palpite registrado ainda.")
         st.stop()
 
     df = pd.read_csv(ARQUIVO)
 
-    required_cols = ["Nome", "GolsA", "GolsB", "PrimeiroGol", "Minuto"]
-
-    if not all(col in df.columns for col in required_cols):
-        st.error("CSV inválido ou corrompido.")
-        st.stop()
-
     # =====================================
-    # FINANCEIRO
+    # PRÊMIO
     # =====================================
     total = len(df) * VALOR_APOSTA
     premio = total * 0.4
@@ -87,81 +83,42 @@ if st.button("Calcular vencedor"):
         st.metric("Churrasco", f"R$ {churrasco:.2f}")
 
     # =====================================
-    # FUNÇÃO DE RANKING (HIERÁRQUICO CORRETO)
+    # FUNÇÃO DE PONTUAÇÃO
     # =====================================
-    def calcular_rank(linha):
+    def calcular_pontos(linha):
 
-        # 1) Placar exato (CRITÉRIO MAIS IMPORTANTE)
-        placar_exato = (
-            linha["GolsA"] == resultado_brasil and
-            linha["GolsB"] == resultado_marrocos
+        # prioridade máxima: placar
+        erro_placar = (
+            abs(linha["GolsA"] - resultado_a)
+            + abs(linha["GolsB"] - resultado_b)
         )
 
-        # 2) Resultado (vitória/empate/derrota)
-        resultado_real = resultado_brasil - resultado_marrocos
-        resultado_aposta = linha["GolsA"] - linha["GolsB"]
+        # segundo critério: primeiro gol (forte penalidade)
+        erro_time = 0
+        if linha["PrimeiroGol"] != primeiro_gol:
+            erro_time = 100
 
-        acertou_resultado = (
-            (resultado_real > 0 and resultado_aposta > 0) or
-            (resultado_real < 0 and resultado_aposta < 0) or
-            (resultado_real == 0 and resultado_aposta == 0)
-        )
-
-        # 3) Primeiro gol
-        acertou_primeiro_gol = (
-            linha["PrimeiroGol"] == primeiro_gol
-        )
-
-        # 4) Minuto (APENAS DESEMPATE FINAL)
+        # desempate: minuto
         erro_minuto = abs(linha["Minuto"] - minuto_primeiro_gol)
 
-        # =====================================
-        # TUPLA DE RANKING (ordem importa)
-        # =====================================
-        return (
-            int(placar_exato),          # 1º critério
-            int(acertou_resultado),     # 2º critério
-            int(acertou_primeiro_gol),  # 3º critério
-            -erro_minuto                # 4º critério (menor vence)
-        )
+        return erro_placar * 1000 + erro_time + erro_minuto
 
     # =====================================
     # RANKING
     # =====================================
-    df["Rank"] = df.apply(calcular_rank, axis=1)
+    df["Pontuacao"] = df.apply(calcular_pontos, axis=1)
 
-    ranking = df.sort_values(by="Rank", ascending=False)
+    ranking = df.sort_values("Pontuacao")
 
     vencedor = ranking.iloc[0]
 
-    # =====================================
-    # RESULTADO
-    # =====================================
     st.success(f"🏆 Vencedor: {vencedor['Nome']}")
 
-    # Se quiser mostrar empate técnico
-    melhores = ranking[ranking["Rank"] == ranking.iloc[0]["Rank"]]
-
-    if len(melhores) > 1:
-        st.warning("⚠️ Houve empate!")
-
-    # =====================================
-    # RANKING FINAL
-    # =====================================
     st.subheader("📊 Ranking Final")
 
     st.dataframe(
         ranking[
-            ["Nome", "GolsA", "GolsB", "PrimeiroGol", "Minuto"]
+            ["Nome", "GolsA", "GolsB", "PrimeiroGol", "Minuto", "Pontuacao"]
         ],
         use_container_width=True
     )
-
-    # =====================================
-    # RESUMO DO JOGO
-    # =====================================
-    st.markdown("### 📌 Resultado do Jogo")
-
-    st.write(f"Brasil {resultado_brasil} x {resultado_marrocos} Marrocos")
-    st.write(f"Primeiro gol: {primeiro_gol}")
-    st.write(f"Minuto: {minuto_primeiro_gol}")
