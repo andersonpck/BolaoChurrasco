@@ -17,12 +17,11 @@ st.set_page_config(
 # =====================================
 TIME_A = "Brasil"
 TIME_B = "Marrocos"
-BANDEIRA_A = ""
-BANDEIRA_B = ""
 
 VALOR_APOSTA = 80
 PERCENTUAL_PREMIO = 0.40
-ARQUIVO = "palpites.csv"
+BASE_DIR = os.path.dirname(os.path.abspath(_file_))
+ARQUIVO = os.path.join(BASE_DIR, "palpites.csv")
 
 ENCERRAMENTO = datetime(2026, 6, 13, 19, 0)
 
