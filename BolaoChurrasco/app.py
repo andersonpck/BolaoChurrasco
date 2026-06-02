@@ -92,12 +92,12 @@ if modo == "Apostar":
         st.balloons()
 
     st.markdown("---")
-    st.subheader("📊 Palpites registrados")
+    st.subheader("📊 Status do bolão")
 
-    st.dataframe(df)
+    st.info(f"Total de palpites enviados: {len(df)}")
 
 # =====================================
-# MODO ADMIN (PROTEGIDO)
+# MODO ADMIN
 # =====================================
 elif modo == "Admin":
 
@@ -120,6 +120,20 @@ elif modo == "Admin":
 
     minuto_oficial = st.number_input("Minuto do primeiro gol", 1, 120, 1)
 
+    # =====================================
+    # BOTÃO ZERAR BOLÃO
+    # =====================================
+    if st.button("🧨 Zerar bolão (apagar todos os palpites)"):
+
+        df = df.iloc[0:0]
+        df.to_csv(ARQUIVO, index=False)
+
+        st.success("🔥 Bolão zerado com sucesso!")
+        st.stop()
+
+    # =====================================
+    # CALCULAR VENCEDOR
+    # =====================================
     if st.button("Calcular vencedor"):
 
         def calcular_pontos(linha):
