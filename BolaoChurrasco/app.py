@@ -284,7 +284,7 @@ if modo == "Apostar":
         </div>
         """,
         unsafe_allow_html=True
-        )
+    )
 
 st.snow()
 
