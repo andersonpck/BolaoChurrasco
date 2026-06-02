@@ -267,21 +267,10 @@ if modo == "Apostar":
             index=False
         )
         st.success(
-        "💰 Aposta registrada com sucesso! 🍖"
+            "💰 Aposta registrada com sucesso! 🍖"
         )
         
         st.baloons()
-        
-        st.markdown("""
-        ### 🍖 Bem-vindo ao churrasco!
-
-        💸 Sua contribuição foi registrada.
-
-        🏆 Boa sorte no bolão!
-        """)
-    
-        
-    
 
 # =====================================
 # ADMIN
