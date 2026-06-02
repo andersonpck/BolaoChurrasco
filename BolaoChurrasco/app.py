@@ -270,7 +270,7 @@ if modo == "Apostar":
         "💰 Aposta registrada com sucesso! 🍖"
         )
         
-            st.baloons()
+        st.baloons()
         
         st.markdown("""
         ### 🍖 Bem-vindo ao churrasco!
@@ -280,7 +280,7 @@ if modo == "Apostar":
         🏆 Boa sorte no bolão!
         """)
     
-        st.baloons()
+        
     
 
 # =====================================
