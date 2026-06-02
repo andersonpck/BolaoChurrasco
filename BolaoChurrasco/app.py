@@ -266,12 +266,12 @@ if modo == "Apostar":
             header=False,
             index=False
         )
+        
         st.success(
             "💰 Aposta registrada com sucesso! 🍖"
         )
         
-        st.baloons()
-
+        st.balloons()
 # =====================================
 # ADMIN
 # =====================================
