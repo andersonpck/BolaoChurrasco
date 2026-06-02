@@ -82,7 +82,7 @@ if st.button("Calcular vencedor"):
         )
 
         erro_time = 0
-        if linha["PrimeiroGol"] != primeiro_gol:
+    if linha["PrimeiroGol"] != primeiro_gol:
             erro_time = 100
 
         erro_minuto = abs(linha["Minuto"] - minuto_primeiro_gol)
@@ -93,7 +93,7 @@ if st.button("Calcular vencedor"):
 
         ranking = df.sort_values("Pontuacao")
 
-        if len(ranking) == 0:
+    if len(ranking) == 0:
         st.warning("Nenhum palpite encontrado para calcular o vencedor.")
         st.stop()
 
