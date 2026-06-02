@@ -3,12 +3,12 @@ import pandas as pd
 import os
 import streamlit as st
 
-st.write("📁 Arquivos no servidor:")
-st.write(os.listdir())
+
 # =====================================
 # CONFIGURAÇÕES
 # =====================================
-ARQUIVO = "palpites.csv"
+BASE_DIR = os.path.dirname(os.path.abspath(_file_))
+ARQUIVO = os.path.join(BASE_DIR, "palpites.csv")
 VALOR_APOSTA = 80
 
 st.set_page_config(
