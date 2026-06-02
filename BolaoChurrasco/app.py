@@ -271,7 +271,7 @@ if modo == "Apostar":
     "💰 Aposta registrada com sucesso! 🍖"
 )
 
-st.markdown(
+    st.markdown(
     """
     <div style="
         text-align:center;
