@@ -93,7 +93,11 @@ if st.button("Calcular vencedor"):
 
     ranking = df.sort_values("Pontuacao")
 
-    vencedor = ranking.iloc[0]
+    if len(ranking) == 0:
+    st.warning("Nenhum palpite encontrado para calcular o vencedor.")
+    st.stop()
+
+vencedor = ranking.iloc[0]
 
     st.success(f"🏆 Vencedor: {vencedor['Nome']}")
 
