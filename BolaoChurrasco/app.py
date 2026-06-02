@@ -281,7 +281,7 @@ if modo == "Apostar":
 
         🏆 Boa sorte no bolão!
         """)
-    )
+    
 
     st.snow()
 
