@@ -1,11 +1,10 @@
 import streamlit as st
 import pandas as pd
-from datetime import datetime
 import os
-import streamlit as st
+from datetime import datetime
 
 # =====================================
-# CONFIGURAÇÃO DO STREAMLIT
+# CONFIGURAÇÃO
 # =====================================
 st.set_page_config(
     page_title="Bolão do Churrasco",
@@ -13,130 +12,130 @@ st.set_page_config(
     layout="centered"
 )
 
-# =====================================
-# CONFIGURAÇÕES DO JOGO
-# =====================================
 TIME_A = "Brasil"
 TIME_B = "Marrocos"
 
 VALOR_APOSTA = 80
-PERCENTUAL_PREMIO = 0.40
+ARQUIVO = "palpites.csv"
 
 ENCERRAMENTO = datetime(2026, 6, 13, 19, 0)
 
 # =====================================
-# ARQUIVO (SIMPLIFICADO - SEM ERRO DE PATH)
+# MENU (APP + ADMIN)
 # =====================================
-import os
-ARQUIVO = os.path.join(os.path.dirname(os.path.abspath(__file__)), "palpites.csv")
+modo = st.sidebar.selectbox("Modo", ["Apostar", "Admin"])
 
-# =====================================
-# TÍTULO
-# =====================================
 st.title("⚽ Bolão do Churrasco")
 
-st.subheader(f"{TIME_A} x {TIME_B}")
+# =====================================
+# CRIAR CSV SE NÃO EXISTIR
+# =====================================
+if not os.path.exists(ARQUIVO):
+    df_init = pd.DataFrame(columns=[
+        "Nome", "GolsA", "GolsB", "PrimeiroGol", "Minuto", "DataHora"
+    ])
+    df_init.to_csv(ARQUIVO, index=False)
 
-st.caption(
-    f"Encerramento: {ENCERRAMENTO.strftime('%d/%m/%Y %H:%M')}"
-)
+df = pd.read_csv(ARQUIVO)
 
 # =====================================
-# CARREGAR DADOS
+# MODO APOSTA
 # =====================================
-if os.path.exists(ARQUIVO):
-    df = pd.read_csv(ARQUIVO)
-    participantes = len(df)
-else:
-    participantes = 0
+if modo == "Apostar":
 
-premio = participantes * VALOR_APOSTA * PERCENTUAL_PREMIO
+    st.subheader(f"{TIME_A} x {TIME_B}")
 
-col1, col2 = st.columns(2)
+    agora = datetime.now()
 
-with col1:
-    st.metric("👥 Participantes", participantes)
-
-with col2:
-    st.metric("🏆 Prêmio Atual", f"R$ {premio:.2f}")
-
-# =====================================
-# CONTAGEM REGRESSIVA
-# =====================================
-agora = datetime.now()
-
-if agora < ENCERRAMENTO:
-    restante = ENCERRAMENTO - agora
-    dias = restante.days
-    horas = restante.seconds // 3600
-    minutos = (restante.seconds % 3600) // 60
-
-    st.info(f"⏰ Encerramento em {dias}d {horas}h {minutos}min")
-else:
-    st.error("🚫 As apostas estão encerradas.")
-    st.stop()
-
-st.markdown("---")
-
-# =====================================
-# FORMULÁRIO
-# =====================================
-nome = st.text_input("Nome")
-
-col1, col2 = st.columns(2)
-
-with col1:
-    gols_a = st.number_input(f"Gols {TIME_A}", 0, 20, 0)
-
-with col2:
-    gols_b = st.number_input(f"Gols {TIME_B}", 0, 20, 0)
-
-primeiro_gol = st.radio(
-    "Quem fará o primeiro gol?",
-    [TIME_A, TIME_B]
-)
-
-minuto = st.number_input(
-    "Minuto do primeiro gol",
-    min_value=1,
-    max_value=120,
-    value=1
-)
-
-# =====================================
-# SALVAR PALPITE
-# =====================================
-if st.button("Enviar Palpite"):
-
-    if nome.strip() == "":
-        st.error("Informe seu nome.")
+    if agora > ENCERRAMENTO:
+        st.error("Apostas encerradas.")
         st.stop()
 
-    # evita nome duplicado
-    if os.path.exists(ARQUIVO):
-        df_existente = pd.read_csv(ARQUIVO)
-        nomes = df_existente["Nome"].astype(str).str.lower().str.strip()
+    nome = st.text_input("Nome")
 
-        if nome.lower().strip() in nomes.values:
-            st.error("Você já fez um palpite.")
+    col1, col2 = st.columns(2)
+
+    with col1:
+        gols_a = st.number_input(f"Gols {TIME_A}", 0, 20, 0)
+
+    with col2:
+        gols_b = st.number_input(f"Gols {TIME_B}", 0, 20, 0)
+
+    primeiro_gol = st.radio("Primeiro gol", [TIME_A, TIME_B])
+
+    minuto = st.number_input("Minuto do primeiro gol", 1, 120, 1)
+
+    if st.button("Enviar palpite"):
+
+        if nome.strip() == "":
+            st.error("Digite seu nome.")
             st.stop()
 
-    novo_palpite = pd.DataFrame([{
-        "Nome": nome,
-        "GolsA": gols_a,
-        "GolsB": gols_b,
-        "PrimeiroGol": primeiro_gol,
-        "Minuto": minuto,
-        "DataHora": datetime.now()
-    }])
+        if nome.lower() in df["Nome"].astype(str).str.lower().values:
+            st.error("Você já apostou.")
+            st.stop()
 
-    # salva ou cria arquivo automaticamente
-    novo_palpite.to_csv(
-        ARQUIVO,
-        mode="a",
-        header=not os.path.exists(ARQUIVO),
-        index=False
-    )
+        novo = pd.DataFrame([{
+            "Nome": nome,
+            "GolsA": gols_a,
+            "GolsB": gols_b,
+            "PrimeiroGol": primeiro_gol,
+            "Minuto": minuto,
+            "DataHora": datetime.now()
+        }])
 
-    st.success("✅ Palpite registrado com sucesso!")
-    st.balloons()
+        novo.to_csv(ARQUIVO, mode="a", header=False, index=False)
+
+        st.success("Palpite registrado!")
+        st.balloons()
+
+    st.markdown("---")
+    st.subheader("📊 Palpites registrados")
+    st.dataframe(df)
+
+# =====================================
+# MODO ADMIN
+# =====================================
+elif modo == "Admin":
+
+    st.subheader("🏆 Administração")
+
+    if df.empty:
+        st.warning("Nenhum palpite ainda.")
+        st.stop()
+
+    resultado_a = st.number_input(f"Gols {TIME_A}", 0, 20, 0)
+    resultado_b = st.number_input(f"Gols {TIME_B}", 0, 20, 0)
+
+    primeiro_gol_oficial = st.radio("Primeiro gol oficial", [TIME_A, TIME_B])
+    minuto_oficial = st.number_input("Minuto do primeiro gol", 1, 120, 1)
+
+    if st.button("Calcular vencedor"):
+
+        def calcular_pontos(linha):
+
+            erro_placar = abs(linha["GolsA"] - resultado_a) + abs(linha["GolsB"] - resultado_b)
+
+            erro_time = 0
+            if linha["PrimeiroGol"] != primeiro_gol_oficial:
+                erro_time = 100
+
+            erro_minuto = abs(linha["Minuto"] - minuto_oficial)
+
+            return erro_placar * 1000 + erro_time + erro_minuto
+
+        df["Pontuacao"] = df.apply(calcular_pontos, axis=1)
+
+        ranking = df.sort_values("Pontuacao")
+
+        vencedor = ranking.iloc[0]
+
+        st.success(f"🏆 Vencedor: {vencedor['Nome']}")
+
+        st.subheader("📊 Ranking")
+
+        st.dataframe(
+            ranking[
+                ["Nome", "GolsA", "GolsB", "PrimeiroGol", "Minuto", "Pontuacao"]
+            ]
+        )
