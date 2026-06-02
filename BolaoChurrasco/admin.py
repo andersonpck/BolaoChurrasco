@@ -85,7 +85,7 @@ if st.button("Calcular vencedor"):
     if linha["PrimeiroGol"] != primeiro_gol:
             erro_time = 100
 
-    erro_minuto = abs(linha["Minuto"] - minuto_primeiro_gol)
+        erro_minuto = abs(linha["Minuto"] - minuto_primeiro_gol)
 
     return erro_placar * 1000 + erro_time + erro_minuto
 
