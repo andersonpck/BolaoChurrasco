@@ -3,8 +3,8 @@ import pandas as pd
 import os
 from datetime import datetime
 import os
-
-# =====================================
+st.write("cwd:", os.getcwd())
+st.write("files:", os.listdir())
 # CONFIGURAÇÃO DO STREAMLIT
 # =====================================
 st.set_page_config(
