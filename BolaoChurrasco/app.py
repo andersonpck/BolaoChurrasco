@@ -2,6 +2,13 @@ import streamlit as st
 import pandas as pd
 import os
 from datetime import datetime
+import os
+import streamlit as st
+
+st.write("📍 Caminho atual:", os.getcwd())
+st.write("📁 Arquivos:", os.listdir())
+
+st.write("📄 Existe CSV?", os.path.exists("palpites.csv"))
 
 # =====================================
 # CONFIGURAÇÃO DO STREAMLIT
