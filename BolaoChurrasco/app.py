@@ -282,7 +282,7 @@ if modo == "Apostar":
         🏆 Boa sorte no bolão!
         """)
     
-st.baloons()
+        st.baloons()
     
 
 # =====================================
