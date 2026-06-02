@@ -2,7 +2,9 @@ import streamlit as st
 import pandas as pd
 import os
 from datetime import datetime
-
+import os
+st.write("📁 Arquivos no servidor:")
+st.write(os.listdir())
 # =====================================
 # CONFIGURAÇÃO DO STREAMLIT
 # =====================================
