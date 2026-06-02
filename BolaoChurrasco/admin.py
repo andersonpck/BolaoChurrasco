@@ -7,7 +7,7 @@ import streamlit as st
 # =====================================
 # CONFIGURAÇÕES
 # =====================================
-BASE_DIR = os.path.dirname(os.path.abspath(_file_))
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 ARQUIVO = os.path.join(BASE_DIR, "palpites.csv")
 VALOR_APOSTA = 80
 
