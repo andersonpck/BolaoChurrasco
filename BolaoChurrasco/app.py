@@ -24,10 +24,9 @@ PERCENTUAL_PREMIO = 0.40
 ENCERRAMENTO = datetime(2026, 6, 13, 19, 0)
 
 # =====================================
-# CAMINHO DO ARQUIVO (CORRETO PARA DEPLOY)
+# ARQUIVO (SIMPLIFICADO - SEM ERRO DE PATH)
 # =====================================
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-ARQUIVO = os.path.join(BASE_DIR, "palpites.csv")
+ARQUIVO = "palpites.csv"
 
 # =====================================
 # TÍTULO
@@ -41,7 +40,7 @@ st.caption(
 )
 
 # =====================================
-# PARTICIPANTES E PRÊMIO
+# CARREGAR DADOS
 # =====================================
 if os.path.exists(ARQUIVO):
     df = pd.read_csv(ARQUIVO)
@@ -70,9 +69,7 @@ if agora < ENCERRAMENTO:
     horas = restante.seconds // 3600
     minutos = (restante.seconds % 3600) // 60
 
-    st.info(
-        f"⏰ Encerramento em {dias}d {horas}h {minutos}min"
-    )
+    st.info(f"⏰ Encerramento em {dias}d {horas}h {minutos}min")
 else:
     st.error("🚫 As apostas estão encerradas.")
     st.stop()
@@ -80,7 +77,7 @@ else:
 st.markdown("---")
 
 # =====================================
-# FORMULÁRIO DE PALPITE
+# FORMULÁRIO
 # =====================================
 nome = st.text_input("Nome")
 
@@ -113,7 +110,7 @@ if st.button("Enviar Palpite"):
         st.error("Informe seu nome.")
         st.stop()
 
-    # evitar duplicidade de nome
+    # evita nome duplicado
     if os.path.exists(ARQUIVO):
         df_existente = pd.read_csv(ARQUIVO)
         nomes = df_existente["Nome"].astype(str).str.lower().str.strip()
@@ -131,7 +128,7 @@ if st.button("Enviar Palpite"):
         "DataHora": datetime.now()
     }])
 
-    # salva corretamente (cria ou adiciona)
+    # salva ou cria arquivo automaticamente
     novo_palpite.to_csv(
         ARQUIVO,
         mode="a",
