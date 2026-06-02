@@ -30,7 +30,7 @@ ENCERRAMENTO = datetime(2026, 6, 13, 19, 0)
 # =====================================
 st.title("⚽ Bolão do Churrasco")
 
-st.subheader(f"{BANDEIRA_A} {TIME_A} x {TIME_B} {BANDEIRA_B}")
+st.subheader(f" {TIME_A} x {TIME_B}")
 
 st.caption(
     f"Encerramento: {ENCERRAMENTO.strftime('%d/%m/%Y %H:%M')}"
